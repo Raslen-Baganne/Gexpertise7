@@ -1,4 +1,3 @@
-
 from flask import request
 from flask_restx import Namespace, Resource, fields, abort
 from flask_jwt_extended import jwt_required, get_jwt_identity
@@ -72,31 +71,32 @@ class UserResource(Resource):
 
     @jwt_required()
     def delete(self, user_id):
-        """Supprime le dossier personnel de l'utilisateur dans la base de données et dans Ressources."""
+        """Supprime un utilisateur et son dossier personnel dans la base de données et dans Ressources."""
         logger.info(f"DELETE request received for user ID {user_id} by user ID {get_jwt_identity()}")
         current_user_id = get_jwt_identity()
-        
-        # Vérifier que l'utilisateur authentifié est autorisé (optionnel selon vos règles)
-        if current_user_id != user_id:
-            abort(403, "Vous n'êtes pas autorisé à supprimer ce dossier")
+        current_user = get_user_by_id(current_user_id)
+
+        # Autoriser les admins ou l'utilisateur lui-même
+        if current_user.role != 'admin' and current_user_id != user_id:
+            logger.warning(f"Permission denied for user ID {current_user_id} to delete user ID {user_id}")
+            abort(403, "Seul un admin ou l'utilisateur lui-même peut supprimer ce compte")
 
         user = get_user_by_id(user_id)
         if not user:
+            logger.error(f"User ID {user_id} not found")
             abort(404, "Utilisateur non trouvé")
 
-        if not user.folders:
-            return {"message": "Aucun dossier à supprimer pour cet utilisateur"}, 200
-
         try:
-            success = delete_user(user_id)  # Utiliser delete_user pour supprimer dossier physique et DB
+            success = delete_user(user_id)  # Supprime l'utilisateur et son dossier
             if success:
-                logger.info(f"Dossier supprimé avec succès pour l'utilisateur ID {user_id}")
-                return {"message": "Dossier supprimé avec succès"}, 200
+                logger.info(f"Utilisateur ID {user_id} et son dossier supprimés avec succès")
+                return {"message": "Utilisateur et dossier supprimés avec succès"}, 200
             else:
-                abort(500, "Échec de la suppression du dossier")
+                logger.error(f"Failed to delete user ID {user_id}")
+                abort(500, "Échec de la suppression de l'utilisateur")
         except Exception as e:
             logger.error(f"Erreur lors de la suppression pour l'utilisateur ID {user_id}: {str(e)}")
-            abort(500, f"Échec de la suppression du dossier: {str(e)}")
+            abort(500, f"Erreur lors de la suppression: {str(e)}")
 
 @ns.route("/<int:user_id>/password")
 @ns.param("user_id", "L'identifiant de l'utilisateur")

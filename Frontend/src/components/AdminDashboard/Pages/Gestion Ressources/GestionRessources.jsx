@@ -13,14 +13,9 @@ import {
   Input, 
   DatePicker,
   ConfigProvider,
+  Tooltip,
 } from 'antd';
-import { 
-    FolderOutlined, 
-    DeleteOutlined, 
-    ReloadOutlined,  
-    EditOutlined, 
-    ExclamationCircleOutlined 
-  } from '@ant-design/icons';
+import { FolderOutlined, ReloadOutlined } from '@ant-design/icons';
 import axios from 'axios';
 import moment from 'moment';
 import 'primereact/resources/themes/saga-blue/theme.css';
@@ -36,7 +31,6 @@ axios.defaults.baseURL = API_URL;
 const GestionRessources = () => {
   const [usersWithFolders, setUsersWithFolders] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [selectedRows, setSelectedRows] = useState(null);
   const [isEditModalVisible, setIsEditModalVisible] = useState(false);
   const [editingUser, setEditingUser] = useState(null);
   const [form] = Form.useForm();
@@ -63,7 +57,7 @@ const GestionRessources = () => {
         userId: item.user_id,
         fullName: `${item.nom} ${item.prenom}`,
         email: item.email,
-        folderId: item.folder_id,
+        folderId: item.folder_id || null,
         folderName: item.nom_dossier || 'Aucun dossier',
         creationDate: item.date_creation
           ? moment(item.date_creation).format('DD/MM/YYYY HH:mm:ss')
@@ -121,17 +115,68 @@ const GestionRessources = () => {
     }
   };
 
+  const handleDelete = (userId) => {
+    console.log(`Tentative de suppression de l'utilisateur ID ${userId}`);
+    if (window.confirm(`Voulez-vous vraiment supprimer l'utilisateur ID ${userId} ?`)) {
+      console.log(`Confirmation reçue, suppression de l'utilisateur ID ${userId}`);
+      setLoading(true);
+      const token = localStorage.getItem('token');
+      if (!token) {
+        message.error('Token manquant, veuillez vous reconnecter.');
+        setLoading(false);
+        return;
+      }
+      axios.delete(`/api/users/${userId}`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      })
+        .then(response => {
+          console.log('Réponse de la suppression:', response.data);
+          message.success(response.data.message || 'Utilisateur et dossier supprimés avec succès');
+          fetchUsersWithFolders();
+        })
+        .catch(error => {
+          console.error('Erreur lors de handleDelete:', error);
+          const errorMessage = error.response?.data?.message || error.message;
+          if (error.response?.status === 401) {
+            message.error('Session expirée, veuillez vous reconnecter.');
+          } else if (error.response?.status === 403) {
+            message.error('Vous n\'avez pas les permissions nécessaires pour supprimer cet utilisateur.');
+          } else if (error.response?.status === 404) {
+            message.error('Utilisateur non trouvé.');
+          } else {
+            message.error('Erreur lors de la suppression: ' + errorMessage);
+          }
+        })
+        .finally(() => setLoading(false));
+    } else {
+      console.log('Suppression annulée');
+    }
+  };
+
   const actionBodyTemplate = (rowData) => {
     return (
-      <Space size="small">
-        <Button
-          type="primary"
-          icon={<EditOutlined />}
-          onClick={() => showEditModal(rowData)}
-          className="action-button edit-button"
-        >
-          Modifier
-        </Button>
+      <Space size="middle">
+        <Tooltip title="Modifier l'utilisateur">
+          <Button
+            type="primary"
+            shape="round"
+            icon={<i className="pi pi-pencil" style={{ fontSize: '14px' }} />}
+            onClick={() => showEditModal(rowData)}
+            className="modern-edit-button"
+          />
+        </Tooltip>
+        <Tooltip title="Supprimer l'utilisateur">
+          <Button
+            danger
+            shape="round"
+            icon={<i className="pi pi-trash delete-icon" style={{ fontSize: '14px' }} />}
+            onClick={() => handleDelete(rowData.userId)}
+            className="modern-delete-button"
+          />
+        </Tooltip>
       </Space>
     );
   };
@@ -197,8 +242,6 @@ const GestionRessources = () => {
           ) : (
             <DataTable
               value={usersWithFolders}
-              selection={selectedRows}
-              onSelectionChange={(e) => setSelectedRows(e.value)}
               paginator
               rows={5}
               rowsPerPageOptions={[5, 10, 25]}
@@ -208,11 +251,6 @@ const GestionRessources = () => {
               className="custom-datatable"
               header={<Text strong className="table-header">Liste des utilisateurs et dossiers</Text>}
             >
-              <Column
-                selectionMode="multiple"
-                headerStyle={{ width: '3rem' }}
-                exportable={false}
-              />
               <Column
                 field="userId"
                 header="ID Utilisateur"
@@ -290,12 +328,15 @@ const GestionRessources = () => {
             >
               <Input placeholder="Ex: jean.dupont@example.com" />
             </Form.Item>
-            <Form.Item
-              name="folderName"
-              label="Nom du Dossier"
-            >
-              <Input placeholder="Ex: dossier_projet" />
-            </Form.Item>
+            {/* Afficher le champ "Nom du Dossier" uniquement si un dossier existe */}
+            {editingUser && editingUser.folderName !== 'Aucun dossier' && (
+              <Form.Item
+                name="folderName"
+                label="Nom du Dossier"
+              >
+                <Input placeholder="Ex: dossier_projet" />
+              </Form.Item>
+            )}
             <Form.Item
               name="creationDate"
               label="Date de Création"

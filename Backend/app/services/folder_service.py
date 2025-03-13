@@ -37,16 +37,22 @@ def delete_folder_with_physical(folder_id, folder_name=None, user_email=None):
     folder = get_folder_by_id(folder_id)
     base_resource_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', 'Ressources'))
 
-    # Determine the folder name to delete
     if folder:
         folder_name = folder.nom_dossier
+        # Vérifier que le dossier appartient bien à l'utilisateur si user_email est fourni
+        if user_email:
+            expected_name = user_email.split('@')[0].replace('.', '_')
+            if folder_name != expected_name:
+                logger.error(f"Tentative de suppression d'un dossier non autorisé: {folder_name}")
+                raise Exception("Vous n'êtes pas autorisé à supprimer ce dossier")
         db.session.delete(folder)
         db.session.commit()
         logger.info(f"Entrée du dossier {folder_name} supprimée de la base de données")
     elif user_email:
         folder_name = user_email.split('@')[0].replace('.', '_')
+    else:
+        raise Exception("Aucun dossier ou email fourni pour la suppression")
 
-    # Delete the physical folder
     folder_path = os.path.join(base_resource_path, folder_name)
     if os.path.exists(folder_path):
         try:

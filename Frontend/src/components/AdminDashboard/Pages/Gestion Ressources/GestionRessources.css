@@ -1,224 +1,64 @@
 .gestion-ressources-container {
-    padding: 24px;
-    background: #f5f7fa;
-    min-height: 100vh;
-  }
-  
-  .gestion-card {
-    border-radius: 12px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-    background: #ffffff;
-    overflow: hidden;
-    transition: all 0.3s ease;
-  }
-  
-  .card-title {
-    color: #1890ff !important;
-    font-weight: 700 !important;
-    margin: 0 !important;
-  }
-  
-  .refresh-button {
-    color: #1890ff !important;
-    font-weight: 500;
-    transition: all 0.3s ease;
-  }
-  
-  .refresh-button:hover {
-    color: #40a9ff !important;
-    transform: scale(1.05);
-  }
-  
-  .loading-container {
-    text-align: center;
-    padding: 40px;
-  }
-  
-  .loading-text {
-    display: block;
-    margin-top: 12px;
-    color: #6b7280;
-    font-size: 14px;
-  }
-  
-  .custom-datatable {
+    padding: 20px;
+}
+
+.gestion-card {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+}
+
+.custom-datatable {
     border-radius: 8px;
     overflow: hidden;
-    transition: all 0.3s ease;
-  }
-  
-  .custom-datatable .p-datatable-header {
-    background: #fafafa;
-    border-bottom: 1px solid #e5e7eb;
-    padding: 12px 16px;
-  }
-  
-  .custom-datatable .p-datatable-thead > tr > th {
-    background: #fafafa !important;
-    color: #1f2a44 !important;
-    font-weight: 600 !important;
-    font-size: 14px !important;
-    padding: 12px 16px !important;
-    border-bottom: 1px solid #e5e7eb !important;
-    text-align: left;
-  }
-  
-  .custom-datatable .p-datatable-tbody > tr {
-    transition: background 0.2s ease;
-  }
-  
-  .custom-datatable .p-datatable-tbody > tr:hover {
-    background: #f0f5ff !important;
-  }
-  
-  .custom-datatable .p-datatable-tbody > tr > td {
-    padding: 12px 16px !important;
-    font-size: 14px !important;
-    color: #1f2a44 !important;
-    border-bottom: 1px solid #e5e7eb !important;
-    text-align: left;
-  }
-  
-  .table-column {
-    font-family: 'Inter', sans-serif !important;
-  }
-  
-  .table-header {
-    font-size: 16px !important;
-    color: #1f2a44 !important;
-    font-weight: 600 !important;
-  }
-  
-  .folder-icon {
+}
+
+.table-column {
+    font-size: 14px;
+    color: #1f2a44;
+}
+
+.folder-icon {
     color: #1890ff;
-    font-size: 16px;
-    margin-right: 8px;
-  }
-  
-  .action-button {
-    font-size: 14px !important;
-    padding: 4px 12px !important;
-    border-radius: 6px !important;
-    transition: all 0.3s ease !important;
-    height: 32px !important;
-  }
-  
-  .edit-button {
-    background: #1890ff !important;
-    border-color: #1890ff !important;
-  }
-  
-  .edit-button:hover {
-    background: #40a9ff !important;
-    border-color: #40a9ff !important;
-    transform: scale(1.05);
-  }
-  
-  .delete-button {
-    background: #ff4d4f !important;
+}
+
+.refresh-button {
+    font-size: 14px;
+}
+
+/* Styles pour les boutons modernes */
+.modern-edit-button {
+    background-color: #40c057 !important; /* Vert moderne pour Modifier */
+    border-color: #40c057 !important;
+    transition: all 0.3s ease;
+    padding: 4px 12px;
+}
+
+.modern-edit-button:hover {
+    background-color: #36a848 !important;
+    border-color: #36a848 !important;
+    transform: translateY(-1px);
+}
+
+.modern-delete-button {
+    background-color: #ff4d4f !important; /* Rouge moderne pour Supprimer */
     border-color: #ff4d4f !important;
-  }
-  
-  .delete-button:hover {
-    background: #ff7875 !important;
-    border-color: #ff7875 !important;
-    transform: scale(1.05);
-  }
-  
-  .custom-datatable .p-paginator {
-    background: #ffffff;
-    border-top: 1px solid #e5e7eb;
-    padding: 12px 16px;
-  }
-  
-  .custom-datatable .p-paginator .p-paginator-pages .p-paginator-page {
-    border-radius: 6px !important;
-    margin: 0 4px !important;
-    font-size: 14px !important;
-    transition: all 0.3s ease !important;
-  }
-  
-  .custom-datatable .p-paginator .p-paginator-pages .p-paginator-page.p-highlight {
-    background: #1890ff !important;
-    color: #ffffff !important;
-  }
-  
-  .custom-datatable .p-paginator .p-paginator-pages .p-paginator-page:not(.p-highlight):hover {
-    background: #f0f5ff !important;
-    color: #1890ff !important;
-  }
-  
-  .custom-datatable .p-paginator .p-paginator-first,
-  .custom-datatable .p-paginator .p-paginator-prev,
-  .custom-datatable .p-paginator .p-paginator-next,
-  .custom-datatable .p-paginator .p-paginator-last {
-    color: #1890ff !important;
-    font-size: 14px !important;
-  }
-  
-  .custom-datatable .p-paginator .p-dropdown {
-    border-radius: 6px !important;
-    border: 1px solid #e5e7eb !important;
-  }
-  
-  .edit-modal .ant-modal-header {
-    border-bottom: 1px solid #e5e7eb !important;
-    padding-bottom: 12px !important;
-  }
-  
-  .edit-modal .ant-modal-title {
-    font-size: 18px !important;
-    color: #1f2a44 !important;
-    font-weight: 600 !important;
-  }
-  
-  .edit-modal .ant-modal-body {
-    padding: 24px !important;
-  }
-  
-  .edit-form .ant-form-item-label > label {
-    font-weight: 500 !important;
-    color: #1f2a44 !important;
-  }
-  
-  .edit-form .ant-input,
-  .edit-form .ant-picker {
-    border-radius: 6px !important;
-    padding: 8px 12px !important;
-    font-size: 14px !important;
-  }
-  
-  .edit-form .ant-form-item {
-    margin-bottom: 16px !important;
-  }
-  
-  .edit-modal .ant-modal-footer {
-    border-top: 1px solid #e5e7eb !important;
-    padding-top: 12px !important;
-  }
-  
-  .edit-modal .ant-btn {
-    border-radius: 6px !important;
-    padding: 4px 16px !important;
-    font-size: 14px !important;
-  }
-  
-  .edit-modal .ant-btn-primary {
-    background: #1890ff !important;
-    border-color: #1890ff !important;
-  }
-  
-  .edit-modal .ant-btn-primary:hover {
-    background: #40a9ff !important;
-    border-color: #40a9ff !important;
-  }
-  
-  .edit-modal .ant-btn-default {
-    border-color: #e5e7eb !important;
-    color: #1f2a44 !important;
-  }
-  
-  .edit-modal .ant-btn-default:hover {
-    border-color: #1890ff !important;
-    color: #1890ff !important;
-  }
+    transition: all 0.3s ease;
+    padding: 4px 12px;
+}
+
+.modern-delete-button:hover {
+    background-color: #e63946 !important;
+    border-color: #e63946 !important;
+    transform: translateY(-1px);
+}
+
+/* Style pour l'icône de suppression */
+.delete-icon {
+    color: white !important; /* Icône en blanc */
+}
+
+/* Ajustement des icônes */
+.modern-edit-button .pi,
+.modern-delete-button .pi {
+    vertical-align: middle;
+}
